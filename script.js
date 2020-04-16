@@ -15,7 +15,7 @@ function setup() {
   });
   selector.addEventListener("change", selected);
 
-  makePageForEpisodes(allEpisodes);
+  render();
 
   document.querySelector("#search").addEventListener("keyup", search);
 }
@@ -25,11 +25,7 @@ function selected(event) {
     element.className = element.className.replace(" selected ", " ")
   })
 
-  const element = document.getElementById(event.target.value);
-  if (element) {
-    highlight(element);
-    element.scrollIntoView();
-  }
+  render();
 }
 
 function highlight(element) {
@@ -37,7 +33,7 @@ function highlight(element) {
 }
 
 function search(event) {
-  makePageForEpisodes(allEpisodes.filter(episode => episode.name.toLowerCase().includes(event.target.value.toLowerCase())))
+  render()
 }
 
 function zeroPad(number) {
@@ -51,14 +47,22 @@ function episodeCode(episode) {
   return `S${zeroPad(episode.season)}E${zeroPad(episode.number)}`;
 }
 
-function makePageForEpisodes(episodeList) {
-  document.querySelector("#episode-count").innerText = `Showing ${episodeList.length}/${allEpisodes.length} episodes`;
+function render() {
   const selectedCode = document.getElementById("episode-selector").value;
+  const searchTerm = document.getElementById("search").value.toLowerCase();
+  const episodeList = allEpisodes
+    .filter(episode => !selectedCode || episodeCode(episode) == selectedCode)
+    .filter(episode => episode.name.toLowerCase().includes(searchTerm));
+
+  document.querySelector("#episode-count").innerText = `Showing ${episodeList.length}/${allEpisodes.length} episodes`;
 
   const displayElem = document.getElementById("episodesDisplay");
   displayElem.innerText = '';
   episodeList.forEach((episode, index) => {
     const code = episodeCode(episode);
+    if (selectedCode && selectedCode !== code) {
+      return;
+    }
 
     const episodeContainer = document.createElement("div");
     episodeContainer.className = "episode-container";
