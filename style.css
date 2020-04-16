@@ -7,3 +7,7 @@
   margin: 10px;
   float: left;
 }
+
+.episode-container.selected {
+  border-width: 5px;
+}

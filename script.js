@@ -4,9 +4,36 @@ let allEpisodes;
 
 function setup() {
   allEpisodes = getAllEpisodes();
+
+  const selector = document.querySelector("#episode-selector");
+  allEpisodes.forEach(episode => {
+    const option = document.createElement("option");
+    const code = episodeCode(episode);
+    option.value = code;
+    option.text = `${code} - ${episode.name}`;
+    selector.appendChild(option)
+  });
+  selector.addEventListener("change", selected);
+
   makePageForEpisodes(allEpisodes);
 
   document.querySelector("#search").addEventListener("keyup", search);
+}
+
+function selected(event) {
+  document.querySelectorAll(".episode-container.selected").forEach(element => {
+    element.className = element.className.replace(" selected ", " ")
+  })
+
+  const element = document.getElementById(event.target.value);
+  if (element) {
+    highlight(element);
+    element.scrollIntoView();
+  }
+}
+
+function highlight(element) {
+  element.className = `${element.className} selected `;
 }
 
 function search(event) {
@@ -26,15 +53,22 @@ function episodeCode(episode) {
 
 function makePageForEpisodes(episodeList) {
   document.querySelector("#episode-count").innerText = `Showing ${episodeList.length}/${allEpisodes.length} episodes`;
+  const selectedCode = document.getElementById("episode-selector").value;
 
   const displayElem = document.getElementById("episodesDisplay");
   displayElem.innerText = '';
   episodeList.forEach((episode, index) => {
+    const code = episodeCode(episode);
+
     const episodeContainer = document.createElement("div");
-    episodeContainer.className = "episode-container"
+    episodeContainer.className = "episode-container";
+    if (code === selectedCode) {
+      highlight(episodeContainer);
+    }
+    episodeContainer.id = code;
 
     const header = document.createElement("div");
-    header.innerText = `${episodeCode(episode)} - ${episode.name}`;
+    header.innerText = `${code} - ${episode.name}`;
     episodeContainer.appendChild(header);
 
     const image = document.createElement("img");
