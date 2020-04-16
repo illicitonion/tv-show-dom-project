@@ -3,21 +3,29 @@
 let allEpisodes;
 
 function setup() {
-  allEpisodes = getAllEpisodes();
-
-  const selector = document.querySelector("#episode-selector");
-  allEpisodes.forEach(episode => {
+  const showSelector = document.createElement("select");
+  showSelector.id = "show-selector";
+  showSelector.addEventListener("change", selectShow);
+  getAllShows().forEach(show => {
     const option = document.createElement("option");
-    const code = episodeCode(episode);
-    option.value = code;
-    option.text = `${code} - ${episode.name}`;
-    selector.appendChild(option)
+    option.value = show.id;
+    option.text = show.name;
+    showSelector.appendChild(option);
   });
-  selector.addEventListener("change", selected);
-
-  render();
+  document.getElementById("show-container").appendChild(showSelector);
+  selectShow();
 
   document.querySelector("#search").addEventListener("keyup", search);
+
+  document.querySelector("#episode-selector").addEventListener("change", selected);
+}
+
+function selectShow(event) {
+  fetch(`https://api.tvmaze.com/shows/${document.getElementById("show-selector").value}/episodes`).then(resp => resp.json()).then(episodes => {
+    allEpisodes = episodes;
+
+    render();
+  })
 }
 
 function selected(event) {
@@ -48,6 +56,15 @@ function episodeCode(episode) {
 }
 
 function render() {
+  const selector = document.querySelector("#episode-selector");
+  allEpisodes.forEach(episode => {
+    const option = document.createElement("option");
+    const code = episodeCode(episode);
+    option.value = code;
+    option.text = `${code} - ${episode.name}`;
+    selector.appendChild(option)
+  });
+
   const selectedCode = document.getElementById("episode-selector").value;
   const searchTerm = document.getElementById("search").value.toLowerCase();
   const episodeList = allEpisodes
@@ -75,9 +92,11 @@ function render() {
     header.innerText = `${code} - ${episode.name}`;
     episodeContainer.appendChild(header);
 
-    const image = document.createElement("img");
-    image.src = episode.image.medium;
-    episodeContainer.appendChild(image);
+    if (episode.image) {
+      const image = document.createElement("img");
+      image.src = episode.image.medium;
+      episodeContainer.appendChild(image);
+    }
 
     const description = document.createElement("div");
     episodeContainer.appendChild(description);
