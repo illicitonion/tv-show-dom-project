@@ -1,3 +1,9 @@
-#episodesDisplay {
-  color: red;
+.episode-container {
+  width: 400px;
+  border: 1px black solid;
+  border-radius: 50px;
+  text-align: center;
+  padding: 5px;
+  margin: 10px;
+  float: left;
 }
