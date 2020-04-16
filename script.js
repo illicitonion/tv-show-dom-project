@@ -1,7 +1,16 @@
 //You can edit ALL of the code here
+
+let allEpisodes;
+
 function setup() {
-  const allEpisodes = getAllEpisodes();
+  allEpisodes = getAllEpisodes();
   makePageForEpisodes(allEpisodes);
+
+  document.querySelector("#search").addEventListener("keyup", search);
+}
+
+function search(event) {
+  makePageForEpisodes(allEpisodes.filter(episode => episode.name.toLowerCase().includes(event.target.value.toLowerCase())))
 }
 
 function zeroPad(number) {
@@ -16,7 +25,10 @@ function episodeCode(episode) {
 }
 
 function makePageForEpisodes(episodeList) {
+  document.querySelector("#episode-count").innerText = `Showing ${episodeList.length}/${allEpisodes.length} episodes`;
+
   const displayElem = document.getElementById("episodesDisplay");
+  displayElem.innerText = '';
   episodeList.forEach((episode, index) => {
     const episodeContainer = document.createElement("div");
     episodeContainer.className = "episode-container"
