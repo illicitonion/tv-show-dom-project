@@ -28,6 +28,7 @@ function setup() {
 }
 
 function renderShows(event) {
+  window.scrollTo(0, 0);
   const searchTerm = event && event.target.value.toLowerCase() || "";
 
   let show = document.getElementById("show-container");
@@ -137,6 +138,7 @@ function episodeCode(episode) {
 }
 
 function render() {
+  window.scrollTo(0, 0);
   const selector = document.querySelector("#episode-selector");
   allEpisodes.forEach(episode => {
     const option = document.createElement("option");
