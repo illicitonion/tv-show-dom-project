@@ -34,7 +34,12 @@ function renderShows(event) {
   let show = document.getElementById("show-container");
 
   const showSelector = document.createElement("ul");
-  getAllShows().filter(show => show.name.toLowerCase().includes(searchTerm) || show.summary.toLowerCase().includes(searchTerm)).forEach(show => {
+
+  function showMatchesTerm(show) {
+    return show.name.toLowerCase().includes(searchTerm) || show.summary.toLowerCase().includes(searchTerm);
+  }
+
+  getAllShows().filter(showMatchesTerm).forEach(show => {
     const option = document.createElement("li");
 
     const title = document.createElement("h2");
@@ -127,10 +132,7 @@ function search(event) {
 }
 
 function zeroPad(number) {
-  if (number < 10) {
-    return `0${number}`;
-  }
-  return `${number}`;
+  return `${number}`.padStart(2, "0");
 }
 
 function episodeCode(episode) {
@@ -150,9 +152,14 @@ function render() {
 
   const selectedCode = document.getElementById("episode-selector").value;
   const searchTerm = document.getElementById("search").value.toLowerCase();
+
+  function episodeMatchesSearchTerm(episode) {
+    return episode.name.toLowerCase().includes(searchTerm) || episode.summary.toLowerCase().includes(searchTerm);
+  }
+
   const episodeList = allEpisodes
     .filter(episode => !selectedCode || episodeCode(episode) == selectedCode)
-    .filter(episode => episode.name.toLowerCase().includes(searchTerm));
+    .filter(episodeMatchesSearchTerm);
 
   document.querySelector("#episode-count").innerText = `Showing ${episodeList.length}/${allEpisodes.length} episodes`;
 
